@@ -104,7 +104,7 @@ module.exports = class eventoController {
           return res.status(500).json({ error: "Erro ao deletar evento!" });
         }
         if (results.affectedRows === 0) {
-          return res.status(404).json({ error: "Evento não excluído!" });
+          return res.status(404).json({ error: "Evento não encontrado!" });
         }
         return res
           .status(200)
