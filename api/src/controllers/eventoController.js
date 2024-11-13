@@ -22,7 +22,7 @@ module.exports = class eventoController {
       });
     } catch (error) {
       console.log("Erro ao executar consulta: ", error);
-      return res.status(500).json({ error: "Erro interno do servido" });
+      return res.status(500).json({ error: "Erro interno do servidor" });
     }
   } // fim do 'createEvento'
 
@@ -39,7 +39,7 @@ module.exports = class eventoController {
           .json({ message: "Eventos listados com sucesso", eventos: results });
       });
     } catch (error) {
-      console.log("Erro ao executar a querry: ", error);
+      console.log("Erro ao executar a query: ", error);
       return res.status(500).json({ error: "Erro interno do Servidor" });
     }
   } // fim do 'getAllEventos'
@@ -176,4 +176,37 @@ module.exports = class eventoController {
       return res.status(500).json({ error: "Erro interno do Servidor" });
     }
   }
+  static async getEventosPorData7Dias(req, res) {
+    const dataFiltro = new Date(req.params.data).toISOString().split("T");
+    const dataLimite = new Date(req.params.data); // Converte a data recebida em um objeto Date
+    dataLimite.setDate(dataLimite.getDate() + 7); // Adiciona os dias
+    console.log("Data Fornecida:", dataFiltro);
+    console.log("Data Limite:", dataLimite);
+    const query = `SELECT * FROM evento`;
+    try {
+      connect.query(query, (err, results) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: "Erro ao buscar eventos" });
+        }
+
+        const eventosSelecionados = results.filter(
+          (evento) =>
+            new Date(evento.data_hora).toISOString().split("T")[0] >=
+              dataFiltro[0] &&
+            new Date(evento.data_hora).toISOString().split("T")[0] <
+              dataLimite.toISOString().split("T")[0]
+        );
+
+        console.log(eventosSelecionados);
+
+        return res
+          .status(200)
+          .json({ message: "Eventos: ", eventosSelecionados });
+      });
+    } catch (error) {
+      console.log("Erro ao executar a querry: ", error);
+      return res.status(500).json({ error: "Erro interno do Servidor" });
+    }
+  } // fim do 'getEventosPorData7Dias'
 };
