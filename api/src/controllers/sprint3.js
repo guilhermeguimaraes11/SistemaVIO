@@ -1,24 +1,24 @@
 const connect = require("../db/connect");
 
 module.exports = class eventoController {
-  // criação de um evento
-  static async createEvento(req, res) {
-    const { nome, descricao, data_hora, local, fk_id_organizador } = req.body;
+  // criação de um Reserva
+  static async createReserva(req, res) {
+    const { id_sala, id_usuario, data_reserva } = req.body;
 
-    if (!nome || !descricao || !data_hora || !local || !fk_id_organizador) {
+    if (!id_sala || !id_usuario || !data_reserva) {
       return res
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
-    const query = ` INSERT INTO evento (nome,descricao,data_hora,local,fk_id_organizador) VALUES (?,?,?,?,?)`;
-    const values = [nome, descricao, data_hora, local, fk_id_organizador];
+    const query = ` INSERT INTO reserva (id_sala, id_usuario, data_reserva) VALUES (?,?,?)`;
+    const values = [id_sala, id_usuario, data_reserva];
     try {
       connect.query(query, values, (err) => {
         if (err) {
           console.log(err);
-          return res.status(500).json({ error: "Erro ao criar evento!" });
+          return res.status(500).json({ error: "Erro ao reservar sala!" });
         }
-        return res.status(201).json({ message: "Evento criado com sucesso!" });
+        return res.status(201).json({ message: "Sala reservada com sucesso!" });
       });
     } catch (error) {
       console.log("Erro ao executar consulta: ", error);
@@ -26,17 +26,17 @@ module.exports = class eventoController {
     }
   } // fim do 'createEvento'
 
-  static async getAllEventos(req, res) {
-    const query = `SELECT * FROM evento`;
+  static async getAllReserva(req, res) {
+    const query = `SELECT * FROM reserva`;
     try {
       connect.query(query, (err, results) => {
         if (err) {
           console.log(err);
-          return res.status(500).json({ error: "Erro ao buscar eventos" });
+          return res.status(500).json({ error: "Erro a reservar sala" });
         }
         return res
           .status(200)
-          .json({ message: "Eventos listados com sucesso", eventos: results });
+          .json({ message: "Reservas listadas com sucesso", reserva: results });
       });
     } catch (error) {
       console.log("Erro ao executar a query: ", error);
@@ -44,47 +44,36 @@ module.exports = class eventoController {
     }
   } // fim do 'getAllEventos'
 
-  static async updateEvento(req, res) {
-    const { id_evento, nome, descricao, data_hora, local, fk_id_organizador } =
-      req.body;
+  static async updateReserva(req, res) {
+    const { id_sala, id_usuario, data_reserva } = req.body;
 
-    if (
-      !id_evento ||
-      !nome ||
-      !descricao ||
-      !data_hora ||
-      !local ||
-      !fk_id_organizador
-    ) {
+    if (!id_sala || !id_usuario || !data_reserva || !id_reserva) {
       return res
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
-    const query = ` UPDATE evento SET nome = ?,descricao = ?,data_hora = ?,local = ?, fk_id_organizador = ? WHERE id_evento = ?`;
+    const query = ` UPDATE reserva SET id_sala = ?, id_usuario = ?, data_reserva = ? WHERE id_reserva = ?`;
     const values = [
-      nome,
-      descricao,
-      data_hora,
-      local,
-      fk_id_organizador,
-      id_evento,
+      id_sala,
+      id_usuario,
+      data_reserva
     ];
     try {
       connect.query(query, values, (err, results) => {
         console.log("Resultados: ", results);
         if (err) {
           console.log(err);
-          return res.status(500).json({ error: "Erro ao criar evento!" });
+          return res.status(400).json({ error: "Erro ao atualizar reserva!" });
         }
         if (results.affectedRows === 0) {
-          return res.status(404).json({ message: "Evento não encontrado" });
+          return res.status(404).json({ error: "reserva não encontrada" });
         }
         return res
-          .status(201)
-          .json({ message: "Evento atualizado com sucesso: " });
+          .status(200)
+          .json({ message: "reserva atualizada com sucesso: " });
       });
     } catch (error) {
-      console.log("Erro ao executar consulta: ", error);
+      console.log(error);
       return res.status(500).json({ error: "Erro interno do servidor" });
     }
   } // fim do 'updateEvento'
