@@ -36,15 +36,14 @@ module.exports = class eventoController {
         }
         return res
           .status(200)
-          .json({ message: "Eventos listados com sucesso", events: results });
+          .json({ message: "Eventos listados com sucesso", eventos: results });
       });
     } catch (error) {
-      console.log("Erro ao executar a query:", error);
-      return res.status(500).json({ error: "Erro interno do servidor!" });
+      console.log("Erro ao executar a querry: ", error);
+      return res.status(500).json({ error: "Erro interno do Servidor" });
     }
-  } // fim getalleventos
+  } // fim do 'getAllEventos'
 
-  //criaçao do updateeventos
   static async updateEvento(req, res) {
     const { id_evento, nome, descricao, data_hora, local, fk_id_organizador } =
       req.body;
@@ -61,7 +60,7 @@ module.exports = class eventoController {
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
-    const query = ` update evento SET nome = ?, descricao = ?, data_hora = ?, local = ?, fk_id_organizador = ? where id_evento = ?`;
+    const query = ` UPDATE evento SET nome = ?,descricao = ?,data_hora = ?,local = ?, fk_id_organizador = ? WHERE id_evento = ?`;
     const values = [
       nome,
       descricao,
@@ -75,14 +74,14 @@ module.exports = class eventoController {
         console.log("Resultados: ", results);
         if (err) {
           console.log(err);
-          return res.status(500).json({ error: "Erro ao atualizar evento!" });
+          return res.status(500).json({ error: "Erro ao criar evento!" });
         }
         if (results.affectedRows === 0) {
-          return res.status(404).json({ error: "Evento não encontrado!" });
+          return res.status(404).json({ message: "Evento não encontrado" });
         }
         return res
-          .status(200)
-          .json({ message: "Evento atualizado com sucesso!" });
+          .status(201)
+          .json({ message: "Evento atualizado com sucesso: " });
       });
     } catch (error) {
       console.log("Erro ao executar consulta: ", error);
@@ -90,29 +89,91 @@ module.exports = class eventoController {
     }
   } // fim do 'updateEvento'
 
-  //Exclusao de eventos
   static async deleteEvento(req, res) {
-    const idEvento = req.params.id_evento;
-
-    const query = `delete from evento WHERE id_evento=?`;
-    const values = [idEvento];
+    const eventoId = req.params.id_evento;
+    const query = `DELETE FROM evento WHERE id_evento = ?`;
+    const values = [eventoId];
     try {
-      connect.query(query, values, (err, results) => {
-        console.log("Resultados: ", results);
+      connect.query(query, values, function (err, results) {
         if (err) {
-          console.log(err);
-          return res.status(500).json({ error: "Erro ao deletar evento!" });
+          console.error(err);
+          return res.status(500).json({ error: "Erro Interno do Servidor" });
         }
         if (results.affectedRows === 0) {
-          return res.status(404).json({ error: "Evento não encontrado!" });
+          return res.status(404).json({ error: "Evento não Encontrado" });
         }
-        return res
-          .status(200)
-          .json({ message: "Evento excluído com sucesso!" });
+        return res.status(200).json({ message: "Evento Excluido com Sucesso" });
       });
     } catch (error) {
-      console.log("Erro ao executar consulta: ", error);
-      return res.status(500).json({ error: "Erro interno do servidor" });
+      console.error(error);
+      return res.status(500).json({ error: "Erro Interno do Servidor" });
+    }
+  } // fim do 'deleteEvento'
+
+  static async getEventoPorData(req, res) {
+    const query = `SELECT * FROM evento`;
+
+    try {
+      connect.query(query, (err, results) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: "Erro ao buscar eventos" });
+        }
+        const dataEvento = new Date(results[0].data_hora);
+        const dia = dataEvento.getDate();
+        const mes = dataEvento.getMonth() + 1;
+        const ano = dataEvento.getFullYear();
+        console.log(dia + "/" + mes + "/" + ano);
+
+        const now = new Date();
+        const eventosPassados = results.filter(
+          (evento) => new Date(evento.data_hora) < now
+        );
+        const eventosFuturos = results.filter(
+          (evento) => new Date(evento.data_hora) >= now
+        );
+
+        const diferencaMs =
+          eventosFuturos[0].data_hora.getTime() - now.getTime();
+        const dias = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));
+        const horas = Math.floor(
+          (diferencaMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const min = Math.floor(
+          ((diferencaMs % (1000 * 60 * 60 * 24)) % (1000 * 60 * 60)) /
+            (1000 * 60)
+        );
+        const seg = Math.floor(
+          (((diferencaMs % (1000 * 60 * 60 * 24)) % (1000 * 60 * 60)) %
+            (1000 * 60)) /
+            1000
+        );
+        console.log(
+          diferencaMs,
+          "Faltam: " + dias + " dias",
+          +horas,
+          "horas",
+          +min,
+          "min",
+          +seg,
+          "seg"
+        );
+
+        //comparando datas
+        const dataFiltro = new Date("2024-12-15").toISOString().split("T");
+        const eventosDia = results.filter(
+          (evento) =>
+            new Date(evento.data_hora).toISOString().split("T")[0] ===
+            dataFiltro[0]
+        );
+        console.log("Eventos:", eventosDia);
+        return res
+          .status(200)
+          .json({ message: "Eventos: ", eventosFuturos, eventosPassados });
+      });
+    } catch (error) {
+      console.log("Erro ao executar a querry: ", error);
+      return res.status(500).json({ error: "Erro interno do Servidor" });
     }
   }
 };
