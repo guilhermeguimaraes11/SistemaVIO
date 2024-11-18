@@ -42,10 +42,10 @@ module.exports = class eventoController {
       console.log("Erro ao executar a query: ", error);
       return res.status(500).json({ error: "Erro interno do Servidor" });
     }
-  } // fim do 'getAllEventos'
+  }
 
   static async updateReserva(req, res) {
-    const { id_sala, id_usuario, data_reserva } = req.body;
+    const { id_sala, id_usuario, data_reserva, id_reserva } = req.body;
 
     if (!id_sala || !id_usuario || !data_reserva || !id_reserva) {
       return res
@@ -53,11 +53,7 @@ module.exports = class eventoController {
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
     const query = ` UPDATE reserva SET id_sala = ?, id_usuario = ?, data_reserva = ? WHERE id_reserva = ?`;
-    const values = [
-      id_sala,
-      id_usuario,
-      data_reserva
-    ];
+    const values = [id_sala, id_usuario, data_reserva];
     try {
       connect.query(query, values, (err, results) => {
         console.log("Resultados: ", results);
@@ -66,19 +62,19 @@ module.exports = class eventoController {
           return res.status(400).json({ error: "Erro ao atualizar reserva!" });
         }
         if (results.affectedRows === 0) {
-          return res.status(404).json({ error: "reserva não encontrada" });
+          return res.status(404).json({ error: "Reserva não encontrada" });
         }
         return res
           .status(200)
-          .json({ message: "reserva atualizada com sucesso: " });
+          .json({ message: "Reserva atualizada com sucesso: " });
       });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: "Erro interno do servidor" });
     }
-  } // fim do 'updateEvento'
+  } 
 
-  static async deleteEvento(req, res) {
+  static async deleteReserva(req, res) {
     const eventoId = req.params.id_evento;
     const query = `DELETE FROM evento WHERE id_evento = ?`;
     const values = [eventoId];
