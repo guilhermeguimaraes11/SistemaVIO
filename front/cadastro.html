@@ -6,7 +6,7 @@
     <!-- Define que a página será visualizada adequadamente em dispositivos móveis -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Título da página, exibido na aba do navegador -->
-    <title>Cadastro VIO</title>
+    <title>Cadastro - VIO</title>
     <!-- Link externo para o arquivo de estilo CSS, que define a aparência da página -->
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -16,7 +16,7 @@
       <!-- Div usada para agrupar a logo e o título, facilitando o estilo com flexbox -->
       <div class="logo">
         <!-- Logo do site inserida com a tag <img>, que exibe uma imagem -->
-        <img src="logo.png" alt="Logo do site" />
+        <img src="ingresso.png" alt="Logo do site" />
         <!-- Título principal do site, exibido dentro do cabeçalho -->
         <h1>IngressosFácil</h1>
       </div>
@@ -26,74 +26,70 @@
       <nav>
         <ul>
           <!-- Cada link no menu, que direciona para uma seção específica da página -->
-           <li><a href="index.html">Início</a></li>
-          <li><a href="#home">Início</a></li>
-          <li><a href="#eventos">Eventos</a></li>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="evento.html">Eventos</a></li>
           <li><a href="#sobre">Sobre Nós</a></li>
           <li><a href="#contato">Contato</a></li>
         </ul>
       </nav>
-
-      <button class="botao-header" onclick="window.location.href='index.html'">
-        Home
-      </button>
     </header>
 
     <!-- Conteúdo principal da página, onde informações principais são exibidas -->
     <main>
-      <section id="home">
-        <h2>Cadastro</h2>
-      </section>
+      <section id="home">Cadastro</section>
       <section>
-        <form id="formulario-registro">
-          <!--Entrada do Nome-->
-          <label for="nome"> Nome Completo:</label>
+        <form id="formulario_registro">
+          <!-- Entrada do nome -->
+          <label for="nome">Nome Completo:</label>
           <input type="text" id="nome" name="nome" required />
-          <!--Entrada do CPF-->
-          <label for="cpf"> CPF:</label>
+          <!-- Entrada do cpf -->
+          <label for="cpf">CPF:</label>
           <input type="text" id="cpf" name="cpf" required />
-          <!--Entrada do E-mail-->
-          <label for="email"> E-mail:</label>
+          <!-- Entrada do email -->
+          <label for="email">E-mail:</label>
           <input type="email" id="email" name="email" required />
-          <!--Entrada da Senha-->
-          <label for="senha"> Senha:</label>
+          <!-- Entrada do email -->
+          <label for="senha">Senha:</label>
           <input type="password" id="senha" name="senha" required />
-          <!--Botão de Enviar-->
+          <!-- Botão para enviar formulário -->
+          <form id="form-selecao-data">
+            <label for="data">Data de nascimento: </label>
+            <input type="date" id="data" name="data" required />
+            <input type="submit" value="Enviar" />
+          </form>
           <input type="submit" value="Cadastrar" />
         </form>
       </section>
-      <section id="user-list">
-        <!-- Lista para Exibir os usuarios Cadastrados -->
-        <h2>Usuários Cadastrados</h2>
-       
-      </section>
       <section>
-        <h2>Usuários Cadastrados - Tabela</h2>
-        <table id="user-table">
+        <!-- Lista para exibir os usuários cadastrados -->
+        <h2>Usuários Cadastrados</h2>
+        <ul id="user_list"></ul>
+      </section>
+
+      <section>
+        <h2>Usuários Cadastrados via Tabela</h2>
+        <table id="user_table">
           <thead>
             <th>Nome</th>
             <th>CPF</th>
-            <th>E-mail</th>
+            <th>E-Mail</th>
+            <th>Data de Nascimento</th>
           </thead>
-          <tbody id="user-list-tabela">
-            <!-- Os usuários serão adicionados aqui -->
-            <td></td>
-          </tbody>
+
+          <tbody id="user-list-tabela"></tbody>
         </table>
       </section>
 
       <section>
-        <h2>Organizadores Cadastrado - Tabela</h2>
-        <table id="org-table">
+        <h2>Organizadores Cadastrados via Tabela</h2>
+        <table id="org_table">
           <thead>
             <th>Nome</th>
-            <th>CPF</th>
-            <th>E-mail</th>
+            <th>Telefone</th>
+            <th>Email</th>
           </thead>
-          <tbody id="org-list-tabela">
-            <!-- Os usuários serão adicionados aqui -->
-            <td></td>
-          </tbody>
+
+          <tbody id="org_lista_tabela"></tbody>
         </table>
       </section>
     </main>
@@ -104,9 +100,8 @@
       <p>&copy; 2024 IngressosFácil - Todos os direitos reservados</p>
     </footer>
     <script>
-      /* script como um arquivo 'js'*/
-      function mostrarMensagem() {
-        alert("Olá! Você clicou no botão");
+      function mostrarMsg() {
+        alert("Olá! Você clicou no botão!");
       }
     </script>
     <script src="appUser.js"></script>

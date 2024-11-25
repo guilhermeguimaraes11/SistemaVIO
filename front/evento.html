@@ -4,26 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eventos</title>
-    <link rel="stylesheet" href="styles.css"
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header>
-      <main>
-        <section>
-          <h1>Selecione uma data</h1>
-        </section>
-        <section>
-          <form id="form-selecao-data"></form>
-          <label for="data">Escolha a data:</label>
-          <input type="date"
-          id="data"
-          name="data"
-          min="2024-01-01"
-          max="2024-12-31"/>
-
-          <input type="submit" value="Enviar"/>
-        </section>
-      </main>
-    </header>
+    <header></header>
+    <main>
+      <section>
+        <h1>Selecione uma data</h1>
+      </section>
+      <section>
+        <form id="form-selecao-data">
+          <label for="data">Escolha a data</label>
+          <input
+            type="date"
+            id="data"
+            name="data"
+            min="2024-01-01"
+            max="2024-12-31"
+            required
+          />
+          <input type="submit" value="Enviar" />
+        </form>
+      </section>
+    </main>
+    <script src="appEvento.js"></script>
   </body>
 </html>

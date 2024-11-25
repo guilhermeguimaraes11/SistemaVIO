@@ -1,6 +1,6 @@
 const connect = require("../db/connect");
 
-module.exports = class eventoController {
+module.exports = class reservaController { Reserva
   // criação de um Reserva
   static async createReserva(req, res) {
     const { id_sala, id_usuario, data_reserva } = req.body;
@@ -24,7 +24,7 @@ module.exports = class eventoController {
       console.log("Erro ao executar consulta: ", error);
       return res.status(500).json({ error: "Erro interno do servidor" });
     }
-  } // fim do 'createEvento'
+  } // fim do 'createReserva'
 
   static async getAllReserva(req, res) {
     const query = `SELECT * FROM reserva`;
@@ -75,9 +75,9 @@ module.exports = class eventoController {
   } 
 
   static async deleteReserva(req, res) {
-    const eventoId = req.params.id_evento;
-    const query = `DELETE FROM evento WHERE id_evento = ?`;
-    const values = [eventoId];
+    const reservaId = req.params.id_reserva;
+    const query = `DELETE FROM reserva WHERE id_reserva = ?`;
+    const values = [reservaId];
     try {
       connect.query(query, values, function (err, results) {
         if (err) {
@@ -85,41 +85,41 @@ module.exports = class eventoController {
           return res.status(500).json({ error: "Erro Interno do Servidor" });
         }
         if (results.affectedRows === 0) {
-          return res.status(404).json({ error: "Evento não Encontrado" });
+          return res.status(404).json({ error: "Reserva não Encontrado" });
         }
-        return res.status(200).json({ message: "Evento Excluido com Sucesso" });
+        return res.status(200).json({ message: "Reserva Excluido com Sucesso" });
       });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Erro Interno do Servidor" });
     }
-  } // fim do 'deleteEvento'
+  } // fim do 'deleteReserva'
 
-  static async getEventoPorData(req, res) {
-    const query = `SELECT * FROM evento`;
+  static async getReservaPorData(req, res) {
+    const query = `SELECT * FROM reserva`;
 
     try {
       connect.query(query, (err, results) => {
         if (err) {
           console.log(err);
-          return res.status(500).json({ error: "Erro ao buscar eventos" });
+          return res.status(500).json({ error: "Erro ao buscar Reservas" });
         }
-        const dataEvento = new Date(results[0].data_hora);
-        const dia = dataEvento.getDate();
-        const mes = dataEvento.getMonth() + 1;
-        const ano = dataEvento.getFullYear();
+        const dataReserva = new Date(results[0].data_hora);
+        const dia = dataReserva.getDate();
+        const mes = dataReserva.getMonth() + 1;
+        const ano = dataReserva.getFullYear();
         console.log(dia + "/" + mes + "/" + ano);
 
         const now = new Date();
-        const eventosPassados = results.filter(
-          (evento) => new Date(evento.data_hora) < now
+        const ReservasPassados = results.filter(
+          (Reserva) => new Date(Reserva.data_hora) < now
         );
-        const eventosFuturos = results.filter(
-          (evento) => new Date(evento.data_hora) >= now
+        const ReservasFuturos = results.filter(
+          (Reserva) => new Date(Reserva.data_hora) >= now
         );
 
         const diferencaMs =
-          eventosFuturos[0].data_hora.getTime() - now.getTime();
+          ReservasFuturos[0].data_hora.getTime() - now.getTime();
         const dias = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));
         const horas = Math.floor(
           (diferencaMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
@@ -146,58 +146,58 @@ module.exports = class eventoController {
 
         //comparando datas
         const dataFiltro = new Date("2024-12-15").toISOString().split("T");
-        const eventosDia = results.filter(
-          (evento) =>
-            new Date(evento.data_hora).toISOString().split("T")[0] ===
+        const ReservasDia = results.filter(
+          (Reserva) =>
+            new Date(Reserva.data_hora).toISOString().split("T")[0] ===
             dataFiltro[0]
         );
-        console.log("Eventos:", eventosDia);
+        console.log("Reservas:", ReservasDia);
         return res
           .status(200)
-          .json({ message: "Eventos: ", eventosFuturos, eventosPassados });
+          .json({ message: "Reservas: ", ReservasFuturos, ReservasPassados });
       });
     } catch (error) {
       console.log("Erro ao executar a querry: ", error);
       return res.status(500).json({ error: "Erro interno do Servidor" });
     }
   }
-  static async getEventosPorData7Dias(req, res) {
+  static async getReservasPorData7Dias(req, res) {
     const dataFiltro = new Date(req.params.data).toISOString().split("T");
     const dataLimite = new Date(req.params.data);
     dataLimite.setDate(dataLimite.getDate() + 7);
     console.log("Data Fornecida:", dataFiltro);
     console.log("Data Limite:", dataLimite);
-    const query = `SELECT * FROM evento`;
+    const query = `SELECT * FROM Reserva`;
     try {
       connect.query(query, (err, results) => {
         if (err) {
           console.log(err);
-          return res.status(500).json({ error: "Erro ao buscar eventos" });
+          return res.status(500).json({ error: "Erro ao buscar Reservas" });
         }
 
-        const eventosSelecionados = results.filter(
-          (evento) =>
-            new Date(evento.data_hora).toISOString().split("T")[0] >=
+        const ReservasSelecionados = results.filter(
+          (Reserva) =>
+            new Date(Reserva.data_hora).toISOString().split("T")[0] >=
               dataFiltro[0] &&
-            new Date(evento.data_hora).toISOString().split("T")[0] <
+            new Date(Reserva.data_hora).toISOString().split("T")[0] <
               dataLimite.toISOString().split("T")[0]
         );
 
-        console.log(eventosSelecionados);
+        console.log(ReservasSelecionados);
 
         return res
           .status(200)
-          .json({ message: "Eventos: ", eventosSelecionados });
+          .json({ message: "Reservas: ", ReservasSelecionados });
       });
     } catch (error) {
       console.log("Erro ao executar a querry: ", error);
       return res.status(500).json({ error: "Erro interno do Servidor" });
     }
-    const dataEvento = new Date("2024-10-11T08:00:00Z");
-    const dia = dataEvento.getDate();
-    const mes = dataEvento.getMonth() + 1;
-    const ano = dataEvento.getFullYear();
+    const dataReserva = new Date("2024-10-11T08:00:00Z");
+    const dia = dataReserva.getDate();
+    const mes = dataReserva.getMonth() + 1;
+    const ano = dataReserva.getFullYear();
 
-    console.log(`Evento no dia: ${dia}, Mes: ${mes}, Ano: ${ano}`);
+    console.log(`Reserva no dia: ${dia}, Mes: ${mes}, Ano: ${ano}`);
   }
 };
